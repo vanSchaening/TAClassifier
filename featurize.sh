@@ -57,7 +57,7 @@ then
     echo "...$GBK exists"
 else
     python $TAC_DIR/$GET_GBK -r $REFID -o $GBK
-    echo "...done!"
+    echo "...done! Wrote $GBK"
 fi
 
 echo "Downloading essentiality file..."
@@ -66,6 +66,7 @@ then
     echo "$REFID.essentiality.txt exists"
 else
     wget http://cefg.uestc.edu.cn/geptop/prediction/$REFID.dat -O $REFID.essentiality.txt
+    echo "...done! Wrote $REFID.essentiality.txt"
 fi
 
 echo "Generating positive mapping..."
@@ -77,7 +78,7 @@ then
 else
     python $TAC_DIR/$POSITIVE_MAP -g $GBK -r $REFID -t $TOXIN -a $ANTITOXIN \
         > $POSITIVE.mapping.txt
-    echo "...done!"
+    echo "...done! Wrote $POSITIVE.mapping.txt."
 fi
 
 echo "Generating negative mapping..."
@@ -87,9 +88,9 @@ if [[ -f $NEGATIVE.mapping.txt ]]
 then
     echo "...$NEGATIVE.mapping.txt exists"
 else
-    python $TAC_DIR/$NEGATIVE_MAP -m $POSITIVE.mapping.txt -g $GBK \
+    python $TAC_DIR/$NEGATIVE_MAP -p $POSITIVE.mapping.txt -g $GBK \
         > $NEGATIVE.mapping.txt
-    echo "...done!"
+    echo "...done! Wrote $NEGATIVE.mapping.txt."
 fi
 
 echo "Getting .faa files..."
@@ -101,7 +102,7 @@ do
         echo "...$class.*.faa exist"
     else
         python $TAC_DIR/$GET_FAA -g $GBK -m $class.mapping.txt -o $class
-        echo "...done!"
+        echo "...done! Wrote $class.*.faa."
     fi
 done
 
@@ -115,7 +116,7 @@ do
     then
         echo "$class.essentiality.txt exists"
     else
-        python $TAC_DIR/$ESSENTIALITY -e $class.essentiality.txt -m $class.mapping.txt \
+        python $TAC_DIR/$ESSENTIALITY -e $REFID.essentiality.txt -m $class.mapping.txt \
             > $class.essentiality.txt
         echo "Wrote $class.essentiality.txt"
     fi
