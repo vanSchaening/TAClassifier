@@ -36,7 +36,6 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--positive', help="positive mapping")
     parser.add_argument('-g', '--genbank')
-    parser.add_argument('-o', '--out')
     args = parser.parse_args()
 
     with open(args.positive, 'r') as f:
