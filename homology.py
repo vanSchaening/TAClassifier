@@ -19,7 +19,7 @@ def main():
     if args.database:
         phage_db = args.database
 
-    homology(args.toxin, args.antitoxin, int(args.evalue), args.output)
+    homology(args.toxin, args.antitoxin, args.evalue, args.output)
 
 
 # ------------------------------------------------------------------------------
