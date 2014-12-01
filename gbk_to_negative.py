@@ -51,19 +51,21 @@ def process_adj(gb, ta, out, up=100):
                 upstream_end = min(len(record.seq), upstream_start+up)
             else:
                 continue
-            negative_id = "{0!s}|{1!s}".format(out, i)
+            negative_id = "{0!s}.{1!s}".format(out, i)
             left_record = SeqRecord(Seq(left.qualifiers['translation'][0], IUPAC.protein),
-                id=negative_id,
-                description="{0}:{1}..{2}\t{3}".format(
+                id='|'.join(left.qualifiers['db_xref']),
+                description="\t{0}:{1}..{2}\t{3}".format(
                     record.id, left.location.start, left.location.end,
                     negative_id))
             right_record = SeqRecord(Seq(right.qualifiers['translation'][0], IUPAC.protein),
-                id=negative_id,
-                description="{0}:{1}..{2}\t{3}".format(
+                id='|'.join(right.qualifiers['db_xref']),
+                description="\t{0}:{1}..{2}\t{3}".format(
                     record.id, right.location.start, right.location.end,
                     negative_id))
             upstream_record = SeqRecord(record.seq[upstream_start:upstream_end],
-                id = negative_id)
+                id = negative_id,
+                description="\t{0}:{1}..{2}".format(
+                    record.id, upstream_start, upstream_end))
             yield (left_record, right_record, upstream_record)
 
 def main():
