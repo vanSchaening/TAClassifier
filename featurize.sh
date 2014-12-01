@@ -56,7 +56,9 @@ if [[ -f $GBK ]]
 then
     echo "...$GBK exists"
 else
+    set -o xtrace
     python $TAC_DIR/$GET_GBK -r $REFID -o $GBK
+    set +o xtrace
     echo "...done! Wrote $GBK"
 fi
 
@@ -65,7 +67,9 @@ if [[ -f $REFID.essentiality.txt ]]
 then
     echo "$REFID.essentiality.txt exists"
 else
+    set -o xtrace
     wget http://cefg.uestc.edu.cn/geptop/prediction/$REFID.dat -O $REFID.essentiality.txt
+    set +o xtrace
     echo "...done! Wrote $REFID.essentiality.txt"
 fi
 
@@ -76,8 +80,10 @@ if [[ -f $POSITIVE.mapping.txt ]]
 then
     echo "...$POSITIVE.mapping.txt exists"
 else
+    set -o xtrace
     python $TAC_DIR/$POSITIVE_MAP -g $GBK -r $REFID -t $TOXIN -a $ANTITOXIN \
         > $POSITIVE.mapping.txt
+    set +o xtrace
     echo "...done! Wrote $POSITIVE.mapping.txt."
 fi
 
@@ -88,8 +94,10 @@ if [[ -f $NEGATIVE.mapping.txt ]]
 then
     echo "...$NEGATIVE.mapping.txt exists"
 else
+    set -o xtrace
     python $TAC_DIR/$NEGATIVE_MAP -p $POSITIVE.mapping.txt -g $GBK \
         > $NEGATIVE.mapping.txt
+    set +o xtrace
     echo "...done! Wrote $NEGATIVE.mapping.txt."
 fi
 
@@ -101,7 +109,9 @@ do
     then
         echo "...$class.*.faa exist"
     else
+        set -o xtrace
         python $TAC_DIR/$GET_FAA -g $GBK -m $class.mapping.txt -o $class
+        set +o xtrace
         echo "...done! Wrote $class.*.faa."
     fi
 done
@@ -116,8 +126,10 @@ do
     then
         echo "$class.essentiality.txt exists"
     else
+        set -o xtrace
         python $TAC_DIR/$ESSENTIALITY -e $REFID.essentiality.txt -m $class.mapping.txt \
             > $class.essentiality.txt
+        set +o xtrace
         echo "Wrote $class.essentiality.txt"
     fi
 
@@ -125,8 +137,10 @@ do
     then
         echo "$class.upalindromes.txt exists"
     else
+        set -o xtrace
         python $TAC_DIR/$UPALINDROMES -g $GBK -m $class.mapping.txt \
             > $class.upalindromes.txt
+        set +o xtrace
         echo "Wrote $class.upalindromes.txt"
     fi
 

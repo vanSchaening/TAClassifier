@@ -48,9 +48,13 @@ def main():
         
             tlr = tli[0]
             alr = ali[0]
-            tlb = gb_dict[get_position(tlr)]
-            alb = gb_dict[get_position(alr)]
-            
+            try:
+                tlb = gb_dict[get_position(tlr)]
+                alb = gb_dict[get_position(alr)]
+            except KeyError: 
+                print >> sys.stderr, "Warning...skipping", tl
+                continue 
+
             try:
                 assert (tl in tlb.qualifiers['locus_tag'] or
                         tl in alb.qualifiers['locus_tag'])
