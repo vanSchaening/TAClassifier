@@ -51,6 +51,7 @@ def main():
     get_gi = lambda feature:feature.qualifiers['db_xref'][0]
     get_strand = lambda feature:feature.location.strand
 
+    print "#LOCUS GI:TOXIN GI:ANTITOXIN"
     for i, (left, right) in enumerate(window(
         gb_filter_it(gb_record.features, pos_loci, pos_gis))):
         if abs(get_strand(left) + get_strand(right)) == 2:

@@ -31,7 +31,9 @@ def main():
     gb_handle.close()
 
     with open(args.mapping, 'r') as f:
-        f.readline() # header
+        header = f.readline() 
+        if header[0] != '#':
+            f.seek(0)
         locus, tgi, agi = zip(*[line.strip().split() for line in f])
 
     w1 = SeqIO.write((makeSeqRecord(gb_dict[gi], gb_record_id) for gi in tgi),
