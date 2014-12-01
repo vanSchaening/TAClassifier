@@ -3,6 +3,27 @@ phage_db = "phageDB/phage.genomes.fasta"
 # ------------------------------------------------------------------------------
 # MAIN FUNCTION
 # ------------------------------------------------------------------------------
+
+def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-a', '--antitoxin', help="antitoxin faa") # antitoxin aa fasta
+    parser.add_argument('-t', '--toxin', help="toxin faa")         # toxin aa fasta
+    parser.add_argument('-o', '--output', help="output prefix")    # output prefix
+    parser.add_argument('-d', '--database', default=False,         # target database to
+                        help="phage genome database")              #    blast against
+    parser.add_argument('-e', '--evalue', type=int, default=20,    # evalue, default is 20
+                        help="expect value for alignments")  
+    args = parser.parse_args()
+
+    if args.database:
+        phage_db = args.database
+
+    homology(args.toxin, args.antitoxin, int(args.evalue), args.output)
+
+
+# ------------------------------------------------------------------------------
+
 from Bio.Blast.Applications import NcbitblastnCommandline as BlastCommandLine
 def homology(toxin_faa,antitoxin_faa, # Input fasta aa files
              evalue,                  # E-value parameter for BLAST
@@ -59,3 +80,8 @@ def storeResults(scores,outfile):
     for name,score in scores.iteritems():
         o.write(name+"\t"+str(score)+"\n")
     o.close()
+
+# ------------------------------------------------------------------------------
+
+if __name__ == '__main__':
+    main()
