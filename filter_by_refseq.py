@@ -8,6 +8,7 @@ def filter_by_refseq(infa, refseq):
         for record in SeqIO.parse(f, 'fasta'):
             nc = record.description.split()[1].split(':')[0]
             if nc == refseq:
+                record.description = record.description[:-1]
                 yield record
 
 def main():
