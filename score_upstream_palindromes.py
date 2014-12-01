@@ -66,7 +66,7 @@ def main():
 
     upstream_window = args.window
 
-    print "#locus_id", "best_palindrome_length", "best_palindrome_distance"
+    print "#LOCUS", "BEST_PALINDROME_LENGTH", "BEST_PALINDROME_DISTANCE"
     with open(args.mapping, 'r') as f:
         header = f.readline()
         if header[0] != '#':
