@@ -147,7 +147,6 @@ do
 
 done
 
-
 STRUCTURE="structure.py"
 HOMOLOGY="homology.py"
 PROPERTIES="properties.py"
@@ -168,22 +167,23 @@ do
 
     if [[ -f $class.properties.txt ]]
     then
-	echo "$class.properties.txt exists"
+	    echo "$class.properties.txt exists"
     else
-	set -o xtrace
-	python $TAC_DIR/$PROPERTIES -t $class.toxin.faa -a $class.antitoxin.faa -o $class
-	set +o xtrace
-	echo "Wrote $class.properties.txt"
+	    set -o xtrace
+	    python $TAC_DIR/$PROPERTIES -t $class.toxin.faa -a $class.antitoxin.faa -o $class
+	    set +o xtrace
+	    echo "Wrote $class.properties.txt"
     fi
 
     if [[ -f $class.homology.txt ]]
     then
-	echo "$class.homology.txt exists"
+	    echo "$class.homology.txt exists"
     else
-	set -o xtrace
-	python $TAC_DIR/$HOMOLOGY -t $class.toxin.faa -a $class.antitoxin.faa -d $DATABASE -o $class
-	set +o xtrace
-	echo "Wrote $class.homology.txt"
+	    set -o xtrace
+	    python $TAC_DIR/$HOMOLOGY -t $class.toxin.faa -a $class.antitoxin.faa \
+            -d $DATABASE -o $class
+	    set +o xtrace
+	    echo "Wrote $class.homology.txt"
     fi
 
 done
