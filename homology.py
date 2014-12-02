@@ -1,4 +1,3 @@
-phage_db = "phageDB/phage.genomes.fasta"
 
 # ------------------------------------------------------------------------------
 # MAIN FUNCTION
@@ -16,25 +15,23 @@ def main():
                         help="expect value for alignments")  
     args = parser.parse_args()
 
-    if args.database:
-        phage_db = args.database
-
-    homology(args.toxin, args.antitoxin, args.evalue, args.output)
+    homology(args.toxin, args.antitoxin, args.database, args.evalue, args.output)
 
 
 # ------------------------------------------------------------------------------
 
 from Bio.Blast.Applications import NcbitblastnCommandline as BlastCommandLine
 def homology(toxin_faa,antitoxin_faa, # Input fasta aa files
+             database,                # Path to target database
              evalue,                  # E-value parameter for BLAST
              out):                    # Output prefix
 
     # Run TBLASTN for toxin
     t_result = ".".join([out,"tblastn","toxin","xml"])
-    runTBLASTN(toxin_faa,t_result,evalue)
+    runTBLASTN(toxin_faa,t_result,evalue,database)
     # Run TBLASTN for antitoxin
     a_result = ".".join([out,"tblastn","antitoxin","xml"])
-    runTBLASTN(toxin_faa,a_result,evalue)
+    runTBLASTN(toxin_faa,a_result,evalue,database)
 
     # Summarize results
     t_scores = summarizeResults(t_results)
@@ -52,9 +49,9 @@ def homology(toxin_faa,antitoxin_faa, # Input fasta aa files
 
 # Run tblastn (align aa seqs to translated nucleotide database) for 
 # given parameters
-def runTBLASTN(query_file,outfile,evalue):
+def runTBLASTN(query_file,outfile,evalue,db):
     # Build blast command
-    blast_cline = BlastCommandLine(query=query_file, db=phage_db,
+    blast_cline = BlastCommandLine(query=query_file, db=db,
                                    evalue=evalue,
                                    out=outfile,outfmt=5)
     # Run it, output will be stored in the files specified above
