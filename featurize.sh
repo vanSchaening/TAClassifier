@@ -48,6 +48,7 @@ set -o nounset
 set -o errexit
 
 TAC_DIR=/Users/graceyeo/dropbox-mit/y1-fall/6.867-machinelearning/project/workspace/TAClassifier
+#TAC_DIR=/home/cschaening/Documents/Research/Laub/TAClassifier
 
 echo "Downloading gbk file..."
 GET_GBK="get_gbk.py"
@@ -142,6 +143,47 @@ do
             > $class.upalindromes.txt
         set +o xtrace
         echo "Wrote $class.upalindromes.txt"
+    fi
+
+done
+
+
+STRUCTURE="structure.py"
+HOMOLOGY="homology.py"
+PROPERTIES="properties.py"
+DATABASE=$TAC_DIR/phageDB/phage.genomes.fasta
+echo "Finding protein properties, gene structure, and phage homology ... "
+for class in $POSITIVE $NEGATIVE
+do
+
+    if [[ -f $class.structure.txt ]]
+    then
+        echo "$class.structure.txt exists"
+    else
+        set -o xtrace
+        python $TAC_DIR/$STRUCTURE -t $class.toxin.faa -a $class.antitoxin.faa  -o $class
+        set +o xtrace
+        echo "Wrote $class.structure.txt"
+    fi
+
+    if [[ -f $class.properties.txt ]]
+    then
+	echo "$class.properties.txt exists"
+    else
+	set -o xtrace
+	python $TAC_DIR/$PROPERTIES -t $class.toxin.faa -a $class.antitoxin.faa -o $class
+	set +o xtrace
+	echo "Wrote $class.properties.txt"
+    fi
+
+    if [[ -f $class.homology.txt ]]
+    then
+	echo "$class.homology.txt exists"
+    else
+	set -o xtrace
+	python $TAC_DIR/$HOMOLOGY -t $class.toxin.faa -a $class.antitoxin.faa -d $DATABASE -o $class
+	set +o xtrace
+	echo "Wrote $class.homology.txt"
     fi
 
 done
