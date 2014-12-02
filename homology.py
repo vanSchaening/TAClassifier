@@ -40,8 +40,8 @@ def homology(toxin_faa,antitoxin_faa, # Input fasta aa files
     t_scores = summarizeResults(t_results)
     a_scores = summarizeResults(a_results)
     # Store results into output files
-    t_out = ".".join([out,"homology","toxin","csv"])
-    a_out = ".".join([out,"homology","antitoxin","csv"])
+    t_out = ".".join([out,"homology","toxin","txt"])
+    a_out = ".".join([out,"homology","antitoxin","txt"])
     storeResults(t_scores,t_out)
     storeResults(a_scores,a_out)
     # Return output filenames

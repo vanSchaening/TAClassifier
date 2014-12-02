@@ -41,12 +41,12 @@ def properties(toxin_faa,antitoxin_faa,out):
     loci = orderPairs(loci)
 
     # Write to output fil
-    outfile = ".".join([out,"properties","csv"])
+    outfile = ".".join([out,"properties","txt"])
     with open(outfile,'w') as o:
         header = "\t".join(["locus",
                             "gene1_pI","gene2_pI",
                             "gene1_weight","gene2_weight"])
-        o.write(header + "\n")
+        o.write("#"+ header.upper() + "\n")
         for locus, gene in loci.iteritems():
             line = map(str, [ locus,gene[0]['pI'],gene[1]['pI'],
                               gene[0]['weight'],gene[1]['weight'] ])

@@ -43,11 +43,13 @@ def structure(toxin_faa, antitoxin_faa,out):
     f.close()
 
     # Create and open output file
-    outfile = ".".join([out,"structure","csv"])
+    outfile = ".".join([out,"structure","txt"])
     o = open(outfile,'w')
     # Write header for output file
-    o.write("\t".join(["locus_ID","gene1_length","gene2_length",
-                       "distance","overlap"])+"\n")
+    header = "\t".join(["locus_ID","gene1_length","gene2_length",
+                        "distance","overlap"])
+    o.write("#" + header.upper() + "\n")
+
 
     # Find operon structure infor for each TA
     # Note that it doesn't actually matter which gene is the toxin and 
