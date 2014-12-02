@@ -12,10 +12,11 @@ EOF
 }
 
 REFID=
-TOXIN=
-ANTITOXIN=
+TOXIN=./TADB/TADB_toxin_aa_v1-1.fas
+ANTITOXIN=./TADB/TADB_antitoxin_aa_v1-1.fas
+BLASTPATH=
 
-while getopts "hr:t:a:" OPTION
+while getopts "hr:t:a:b:" OPTION
 do
     case $OPTION in
     h)
@@ -30,6 +31,9 @@ do
         ;;
     a)
         ANTITOXIN=$OPTARG
+        ;;
+    b)
+        BLASTPATH=$OPTARG
         ;;
     ?)
         usage
@@ -46,6 +50,12 @@ fi
 
 set -o nounset
 set -o errexit
+
+if [[ $BLASTPATH ]]
+then
+    echo "Appending $BLASTPATH to path"
+    export PATH=$PATH:$BLASTPATH
+fi
 
 TAC_DIR=/Users/graceyeo/dropbox-mit/y1-fall/6.867-machinelearning/project/workspace/TAClassifier
 #TAC_DIR=/home/cschaening/Documents/Research/Laub/TAClassifier
