@@ -51,6 +51,7 @@ fi
 set -o nounset
 set -o errexit
 
+<<<<<<< HEAD
 if [[ $BLASTPATH ]]
 then
     echo "Appending $BLASTPATH to path"
@@ -59,6 +60,10 @@ fi
 
 TAC_DIR=/Users/graceyeo/dropbox-mit/y1-fall/6.867-machinelearning/project/workspace/TAClassifier
 #TAC_DIR=/home/cschaening/Documents/Research/Laub/TAClassifier
+=======
+#TAC_DIR=/Users/graceyeo/dropbox-mit/y1-fall/6.867-machinelearning/project/workspace/TAClassifier
+TAC_DIR=/home/cschaening/Documents/Research/Laub/TAClassifier
+>>>>>>> 1b086e8e8cf6ce5415050f14b94bf3b750176fed
 
 echo "Downloading gbk file..."
 GET_GBK="get_gbk.py"
@@ -114,6 +119,7 @@ fi
 
 echo "Getting .faa files..."
 GET_FAA="get_faa_from_map.py"
+GET_START="getStartingPositions.py"
 for class in $POSITIVE $NEGATIVE
 do
     if [[ -f $class.toxin.faa ]] && [[ -f $class.antitoxin.faa ]]
@@ -125,7 +131,18 @@ do
         set +o xtrace
         echo "...done! Wrote $class.*.faa."
     fi
+
+    if [[ -f $class.startPositions.pkl ]]
+    then
+	echo "...$class.startPositions.pkl exists"
+    else
+	set -o xtrace
+	python $TAC_DIR/$GET_START -o $class
+	set -o xtrace
+    fi
 done
+
+
 
 echo "Scoring..."
 ESSENTIALITY="score_essentiality.py"
@@ -160,7 +177,8 @@ done
 STRUCTURE="structure.py"
 HOMOLOGY="homology.py"
 PROPERTIES="properties.py"
-DATABASE=$TAC_DIR/phageDB/phage.genomes.fasta
+#DATABASE=$TAC_DIR/phageDB/phage.genomes.fasta
+DATABASE="/home/cschaening/Documents/Research/Laub/data/phageDB/phage.genomes.fasta"
 echo "Finding protein properties, gene structure, and phage homology ... "
 for class in $POSITIVE $NEGATIVE
 do
@@ -189,11 +207,18 @@ do
     then
 	    echo "$class.homology.txt exists"
     else
+<<<<<<< HEAD
 	    set -o xtrace
 	    python $TAC_DIR/$HOMOLOGY -t $class.toxin.faa -a $class.antitoxin.faa \
             -d $DATABASE -o $class
 	    set +o xtrace
 	    echo "Wrote $class.homology.txt"
+=======
+	set -o xtrace
+	python $TAC_DIR/$HOMOLOGY -t $class.toxin.faa -a $class.antitoxin.faa -d $DATABASE -o $class #-m $class.mapping.txt
+	set +o xtrace
+	echo "Wrote $class.homology.txt"
+>>>>>>> 1b086e8e8cf6ce5415050f14b94bf3b750176fed
     fi
 
 done
