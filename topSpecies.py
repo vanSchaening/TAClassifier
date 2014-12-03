@@ -13,8 +13,7 @@ def main():
     top = topOrganisms(counts,args.number)
     outfile = args.output+".topOrganisms.txt"
     with open(outfile,'w') as o:
-        for name,count in top:
-            o.write(name + "\t" + str(count) + "\n")
+        o.write("\n".join(top))
 
     
 
@@ -40,7 +39,7 @@ def topOrganisms(speciesCounts,n):
     # Return a list of the n species with most training points
     import operator
     species_sorted = sorted(speciesCounts.items(), key=operator.itemgetter(1))
-    return [ (species,count) for (species,count) in species_sorted if count >= n ]
+    return [ species for (species,count) in species_sorted if count >= n ]
 
 # ------------------------------------------------------------------------------
 
