@@ -6,17 +6,18 @@ usage:  options
 OPTIONS:
     -h Show this message
     -r refseq ID
-    -t TADB toxin .faa
-    -a TADB antitoxin .faa
+    -t TADB path (defaults to $TAC_PATH/TADB)
+    -b BLAST path (optional if already on path)
+    -c TAClassifier path
 EOF
 }
 
 REFID=
-TOXIN=./TADB/TADB_toxin_aa_v1-1.fas
-ANTITOXIN=./TADB/TADB_antitoxin_aa_v1-1.fas
-BLASTPATH=
+BLAST_PATH=
+TAC_PATH=
+TADB_PATH=
 
-while getopts "hr:t:a:b:" OPTION
+while getopts "hr:t:b:c:" OPTION
 do
     case $OPTION in
     h)
@@ -27,13 +28,13 @@ do
         REFID=$OPTARG
         ;;
     t)
-        TOXIN=$OPTARG
-        ;;
-    a)
-        ANTITOXIN=$OPTARG
+        TADB_PATH=$OPTARG
         ;;
     b)
-        BLASTPATH=$OPTARG
+        BLAST_PATH=$OPTARG
+        ;;
+    c)
+        TAC_PATH=$OPTARG
         ;;
     ?)
         usage
@@ -42,7 +43,7 @@ do
     esac
 done
 
-if [[ -z $REFID ]] || [[ -z $TOXIN ]] || [[ -z $ANTITOXIN ]]
+if [[ -z $REFID ]] || [[ -z $TAC_PATH ]]
 then 
     usage
     exit 1
@@ -51,13 +52,21 @@ fi
 set -o nounset
 set -o errexit
 
-if [[ $BLASTPATH ]]
+## Resolve paths
+
+if [[ $BLAST_PATH ]]
 then
-    echo "Appending $BLASTPATH to path"
-    export PATH=$PATH:$BLASTPATH
+    echo "Appending $BLAST_PATH to path"
+    export PATH=$PATH:$BLAST_PATH
 fi
 
-TAC_DIR=/Users/graceyeo/dropbox-mit/y1-fall/6.867-machinelearning/project/workspace/TAClassifier
+if ! [[ $TADB_PATH ]]
+then
+    echo "Expecting TADB in $TAC_PATH"
+    TADB_PATH=$TAC_PATH/TADB
+fi
+TOXIN=$TADB_PATH/TADB_toxin_aa_v1-1.fas
+ANTITOXIN=$TADB_PATH/TADB_antitoxin_aa_v1-1.fas
 
 echo "Downloading gbk file..."
 GET_GBK="get_gbk.py"
@@ -67,7 +76,7 @@ then
     echo "...$GBK exists"
 else
     set -o xtrace
-    python $TAC_DIR/$GET_GBK -r $REFID -o $GBK
+    python $TAC_PATH/$GET_GBK -r $REFID -o $GBK
     set +o xtrace
     echo "...done! Wrote $GBK"
 fi
@@ -91,7 +100,7 @@ then
     echo "...$POSITIVE.mapping.txt exists"
 else
     set -o xtrace
-    python $TAC_DIR/$POSITIVE_MAP -g $GBK -r $REFID -t $TOXIN -a $ANTITOXIN \
+    python $TAC_PATH/$POSITIVE_MAP -g $GBK -r $REFID -t $TOXIN -a $ANTITOXIN \
         > $POSITIVE.mapping.txt
     set +o xtrace
     echo "...done! Wrote $POSITIVE.mapping.txt."
@@ -105,7 +114,7 @@ then
     echo "...$NEGATIVE.mapping.txt exists"
 else
     set -o xtrace
-    python $TAC_DIR/$NEGATIVE_MAP -p $POSITIVE.mapping.txt -g $GBK \
+    python $TAC_PATH/$NEGATIVE_MAP -p $POSITIVE.mapping.txt -g $GBK \
         > $NEGATIVE.mapping.txt
     set +o xtrace
     echo "...done! Wrote $NEGATIVE.mapping.txt."
@@ -121,7 +130,7 @@ do
         echo "...$class.*.faa exist"
     else
         set -o xtrace
-        python $TAC_DIR/$GET_FAA -g $GBK -m $class.mapping.txt -o $class
+        python $TAC_PATH/$GET_FAA -g $GBK -m $class.mapping.txt -o $class
         set +o xtrace
         echo "...done! Wrote $class.*.faa."
     fi
@@ -131,7 +140,7 @@ do
 	echo "...$class.startPositions.pkl exists"
     else
 	set -o xtrace
-	python $TAC_DIR/$GET_START -o $class
+	python $TAC_PATH/$GET_START -o $class
 	set -o xtrace
     fi
 done
@@ -149,7 +158,7 @@ do
         echo "$class.essentiality.txt exists"
     else
         set -o xtrace
-        python $TAC_DIR/$ESSENTIALITY -e $REFID.essentiality.txt -m $class.mapping.txt \
+        python $TAC_PATH/$ESSENTIALITY -e $REFID.essentiality.txt -m $class.mapping.txt \
             > $class.essentiality.txt
         set +o xtrace
         echo "Wrote $class.essentiality.txt"
@@ -160,7 +169,7 @@ do
         echo "$class.upalindromes.txt exists"
     else
         set -o xtrace
-        python $TAC_DIR/$UPALINDROMES -g $GBK -m $class.mapping.txt \
+        python $TAC_PATH/$UPALINDROMES -g $GBK -m $class.mapping.txt \
             > $class.upalindromes.txt
         set +o xtrace
         echo "Wrote $class.upalindromes.txt"
@@ -171,8 +180,7 @@ done
 STRUCTURE="structure.py"
 HOMOLOGY="homology.py"
 PROPERTIES="properties.py"
-#DATABASE=$TAC_DIR/phageDB/phage.genomes.fasta
-DATABASE="/home/cschaening/Documents/Research/Laub/data/phageDB/phage.genomes.fasta"
+DATABASE=$TAC_PATH/phageDB/phage.genomes.fasta
 echo "Finding protein properties, gene structure, and phage homology ... "
 for class in $POSITIVE $NEGATIVE
 do
@@ -182,7 +190,7 @@ do
         echo "$class.structure.txt exists"
     else
         set -o xtrace
-        python $TAC_DIR/$STRUCTURE -t $class.toxin.faa -a $class.antitoxin.faa  -o $class
+        python $TAC_PATH/$STRUCTURE -t $class.toxin.faa -a $class.antitoxin.faa  -o $class
         set +o xtrace
         echo "Wrote $class.structure.txt"
     fi
@@ -192,7 +200,7 @@ do
 	    echo "$class.properties.txt exists"
     else
 	    set -o xtrace
-	    python $TAC_DIR/$PROPERTIES -t $class.toxin.faa -a $class.antitoxin.faa -o $class
+	    python $TAC_PATH/$PROPERTIES -t $class.toxin.faa -a $class.antitoxin.faa -o $class
 	    set +o xtrace
 	    echo "Wrote $class.properties.txt"
     fi
@@ -202,7 +210,7 @@ do
 	    echo "$class.homology.txt exists"
     else
 	    set -o xtrace
-	    python $TAC_DIR/$HOMOLOGY -t $class.toxin.faa -a $class.antitoxin.faa \
+	    python $TAC_PATH/$HOMOLOGY -t $class.toxin.faa -a $class.antitoxin.faa \
             -d $DATABASE -o $class
 	    set +o xtrace
 	    echo "Wrote $class.homology.txt"
