@@ -1,14 +1,16 @@
 import argparse
 import sys
 
+from itertools import izip
+
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC
 
-def makeSeqRecord(feature, refseq=""):
+def makeSeqRecord(feature, locus, refseq=""):
     return SeqRecord(Seq(feature.qualifiers['translation'][0], IUPAC.protein),
-        id=feature.qualifiers['locus_tag'][0]+'|'+feature.qualifiers['db_xref'][0],
+        id=locus+'|'+feature.qualifiers['db_xref'][0],
         description="\t{0}:{1}..{2}".format(refseq, 
             feature.location.start, feature.location.end),
         name = "",
@@ -36,9 +38,11 @@ def main():
             f.seek(0)
         locus, tgi, agi = zip(*[line.strip().split() for line in f])
 
-    w1 = SeqIO.write((makeSeqRecord(gb_dict[gi], gb_record_id) for gi in tgi),
+    w1 = SeqIO.write((makeSeqRecord(gb_dict[gi], l, gb_record_id) for (l, gi) 
+            in izip(locus, tgi)),
             args.out+'.toxin.faa', 'fasta')
-    w2 = SeqIO.write((makeSeqRecord(gb_dict[gi], gb_record_id) for gi in agi),
+    w2 = SeqIO.write((makeSeqRecord(gb_dict[gi], l, gb_record_id) for (l, gi) 
+            in izip(locus, agi)),
             args.out+'.antitoxin.faa', 'fasta')
 
     assert w1 == w2

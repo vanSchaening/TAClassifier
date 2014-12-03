@@ -28,7 +28,7 @@ def homology(toxin_faa,antitoxin_faa, # Input fasta aa files
     runTBLASTN(toxin_faa,t_result,evalue,database)
     # Run TBLASTN for antitoxin
     a_result = ".".join([out,"tblastn","antitoxin","xml"])
-    runTBLASTN(toxin_faa,a_result,evalue,database)
+    runTBLASTN(antitoxin_faa,a_result,evalue,database)
 
     # Summarize results
     t_scores = summarizeResults(t_result)

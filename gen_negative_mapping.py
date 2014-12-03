@@ -54,7 +54,7 @@ def main():
     for i, (left, right) in enumerate(window(
         gb_filter_it(gb_record.features, pos_loci, pos_gis))):
         if abs(get_strand(left) + get_strand(right)) == 2:
-            print "{0}|N{1} {2} {3}".format(gb_record.id, i, get_gi(left), get_gi(right)) 
+            print "{0}_N{1} {2} {3}".format(gb_record.id, i, get_gi(left), get_gi(right)) 
 
 
 if __name__ == '__main__':

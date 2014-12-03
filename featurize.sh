@@ -214,9 +214,11 @@ do
 	    set -o xtrace
 	    python $TAC_PATH/$HOMOLOGY -t $class.toxin.faa -a $class.antitoxin.faa \
             -d $DATABASE -o $class
-        gjoin -j 1 $class.homology.toxin.txt \
-            $class.homology.antitoxin.txt \
-            > $class.features.homology.txt
+        echo "#LOCUS HOMOLOGY:TOXIN HOMOLOGY:ANTITOXIN" > $class.features.homology.txt
+        gjoin -j 1 \
+            <(cat $class.homology.toxin.txt | tr "|" "\t" | cut -f 1,3 | sort) \
+            <(cat $class.homology.antitoxin.txt | tr "|" "\t" | cut -f 1,3 | sort) \
+            >> $class.features.homology.txt
 	    set +o xtrace
 	    echo "...Wrote $class.features.homology.txt"
     fi
