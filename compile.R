@@ -1,6 +1,7 @@
 library(plyr)
 
 features<-c("homology", "properties", "structure", "upalindromes", "essentiality")
+class<-c("positive", "negative")
 feature_names<-c("locus_id", "refseq", "class", 
                  "homology.toxin", "homology.antitoxin", 
                  "properties.gene1.pi", "properties.gene2.pi", "properties.gene1.weight", "properties.gene2.weight", 
@@ -19,9 +20,12 @@ import_by_refseq_and_class <- function(refseq, class) {
   return(data)
 }
 
-refseq<-"NC_011060"
-class<-"negative"
+import_by_refseq <- function(refseq) {
+  data<-lapply(classes, function(class) import_by_refseq_and_class(refseq, class))
+  return(Reduce(rbind, data))
+}
 
-data<-import_by_refseq_and_class(refseq, class)
+refseq<-"NC_011060"
+data<-import_by_refseq(refseq)
 
 
