@@ -17,7 +17,7 @@ TAC_PATH=
 OUT_PATH=
 REFID=
 
-while getopts "hd:c:o:p:" OPTION
+while getopts "hd:c:o:p:n:" OPTION
 do
     case $OPTION in
 	h)
@@ -35,6 +35,9 @@ do
 	    ;;
 	p)
 	    REFID=$OPTARG
+	    ;;
+	n)
+	    N=$OPTARG
 	    ;;
 	?)
 	    usage
@@ -71,7 +74,7 @@ then
     exit 1
 else
     set -o xtrace
-    python $TAC_PATH/$TOP -i $INFILE -o $OUT_PATH/$REFID -n 2
+    python $TAC_PATH/$TOP -i $INFILE -o $OUT_PATH/$REFID -n $N
     set +o xtrace
 fi
 
