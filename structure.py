@@ -25,16 +25,12 @@ def structure(toxin_faa, antitoxin_faa,out):
     from Bio import SeqIO
     with open(toxin_faa) as t, open(antitoxin_faa) as a:
         for record in SeqIO.parse(t,'fasta'):
-            locus = record.id.split("|")[0]
-            positions = record.description.split("\t")[1]
-            positions = map(int,positions.split(":")[1].split(".."))
-            loci[locus]['T'] = tuple(positions)
+            locus,positions = parseRecord(record)
+            loci[locus]['T'] = positions
 
         for record in SeqIO.parse(a,'fasta'):
-            locus = record.id.split("|")[0]
-            positions = record.description.split("\t")[1]
-            positions = map(int,positions.split(":")[1].split(".."))
-            loci[locus]['A'] = tuple(positions)
+            locus,positions = parseRecord(record)
+            loci[locus]['A'] = positions
 
     # Create and open output file
     outfile = ".".join([out,"structure","txt"])
@@ -66,11 +62,11 @@ def structure(toxin_faa, antitoxin_faa,out):
     o.close()
     return outfile
 
-def parseHeader(header):
-    head = header.strip().split("\t")
-    locus = head[2]
-    positions = head[1].split(":")[1]
-    positions = map(int,positions.split(".."))
+# Get locus ID and start,end positions from sequence record (from SeqIO)
+def parseRecord(record):
+    locus = record.id.split("|")[0]
+    positions = record.description.split("\t")[1]
+    positions = map(int,positions.split(":")[1].split(".."))
     return locus,tuple(positions)
 
 def geneLengths(locus):
