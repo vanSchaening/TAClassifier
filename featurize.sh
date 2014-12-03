@@ -153,26 +153,26 @@ UPALINDROMES="score_upstream_palindromes.py"
 for class in $POSITIVE $NEGATIVE
 do
 
-    if [[ -f $class.essentiality.txt ]]
+    if [[ -f $class.features.essentiality.txt ]]
     then
-        echo "$class.essentiality.txt exists"
+        echo "...$class.features.essentiality.txt exists"
     else
         set -o xtrace
         python $TAC_PATH/$ESSENTIALITY -e $REFID.essentiality.txt -m $class.mapping.txt \
-            > $class.essentiality.txt
+            > $class.features.essentiality.txt
         set +o xtrace
-        echo "Wrote $class.essentiality.txt"
+        echo "...Wrote $class.essentiality.txt"
     fi
 
-    if [[ -f $class.upalindromes.txt ]]
+    if [[ -f $class.features.upalindromes.txt ]]
     then
-        echo "$class.upalindromes.txt exists"
+        echo "...$class.features.upalindromes.txt exists"
     else
         set -o xtrace
         python $TAC_PATH/$UPALINDROMES -g $GBK -m $class.mapping.txt \
-            > $class.upalindromes.txt
+            > $class.features.upalindromes.txt
         set +o xtrace
-        echo "Wrote $class.upalindromes.txt"
+        echo "...Wrote $class.features.upalindromes.txt"
     fi
 
 done
@@ -185,35 +185,40 @@ echo "Finding protein properties, gene structure, and phage homology ... "
 for class in $POSITIVE $NEGATIVE
 do
 
-    if [[ -f $class.structure.txt ]]
+    if [[ -f $class.features.structure.txt ]]
     then
-        echo "$class.structure.txt exists"
+        echo "...$class.features.structure.txt exists"
     else
         set -o xtrace
-        python $TAC_PATH/$STRUCTURE -t $class.toxin.faa -a $class.antitoxin.faa  -o $class
+        python $TAC_PATH/$STRUCTURE -t $class.toxin.faa -a $class.antitoxin.faa \
+            -o $class.features
         set +o xtrace
-        echo "Wrote $class.structure.txt"
+        echo "...Wrote $class.features.structure.txt"
     fi
 
-    if [[ -f $class.properties.txt ]]
+    if [[ -f $class.features.properties.txt ]]
     then
-	    echo "$class.properties.txt exists"
+	    echo "...$class.features.properties.txt exists"
     else
 	    set -o xtrace
-	    python $TAC_PATH/$PROPERTIES -t $class.toxin.faa -a $class.antitoxin.faa -o $class
+	    python $TAC_PATH/$PROPERTIES -t $class.toxin.faa -a $class.antitoxin.faa \
+            -o $class.features
 	    set +o xtrace
-	    echo "Wrote $class.properties.txt"
+	    echo "...Wrote $class.features.properties.txt"
     fi
 
-    if [[ -f $class.homology.txt ]]
+    if [[ -f $class.features.homology.txt ]]
     then
-	    echo "$class.homology.txt exists"
+	    echo "...$class.features.homology.txt exists"
     else
 	    set -o xtrace
 	    python $TAC_PATH/$HOMOLOGY -t $class.toxin.faa -a $class.antitoxin.faa \
             -d $DATABASE -o $class
+        gjoin -j 1 $class.homology.toxin.txt \
+            $class.homology.antitoxin.txt \
+            > $class.features.homology.txt
 	    set +o xtrace
-	    echo "Wrote $class.homology.txt"
+	    echo "...Wrote $class.features.homology.txt"
     fi
 
 done
