@@ -22,25 +22,19 @@ def structure(toxin_faa, antitoxin_faa,out):
     from collections import defaultdict
     loci = defaultdict(dict)
 
-    # Get positions for all toxins
-    f = open(toxin_faa)
-    for line in f:
-        if line.startswith(">"):
-            locus,positions = parseHeader(line)
-            if not positions:
-                continue
-            loci[locus]['T'] = positions
-    f.close()
+    from Bio import SeqIO
+    with open(toxin_faa) as t, open(antitoxin_faa) as a:
+        for record in SeqIO.parse(t,'fasta'):
+            locus = record.id.split("|")[0]
+            positions = record.description.split("\t")[1]
+            positions = map(int,positions.split(":")[1].split(".."))
+            loci[locus]['T'] = tuple(positions)
 
-    # Get positions for all antitoxins
-    f = open(antitoxin_faa)
-    for line in f:
-        if line.startswith(">"):
-            locus,positions = parseHeader(line)
-            if not positions:
-                continue
-            loci[locus]['A'] = positions
-    f.close()
+        for record in SeqIO.parse(a,'fasta'):
+            locus = record.id.split("|")[0]
+            positions = record.description.split("\t")[1]
+            positions = map(int,positions.split(":")[1].split(".."))
+            loci[locus]['A'] = tuple(positions)
 
     # Create and open output file
     outfile = ".".join([out,"structure","txt"])
@@ -74,8 +68,6 @@ def structure(toxin_faa, antitoxin_faa,out):
 
 def parseHeader(header):
     head = header.strip().split("\t")
-    if len(head) < 4:
-        return header, False
     locus = head[2]
     positions = head[1].split(":")[1]
     positions = map(int,positions.split(".."))
