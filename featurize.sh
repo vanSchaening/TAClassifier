@@ -1,3 +1,5 @@
+# Download files and compute features given a reference sequence 
+
 usage()
 {
 cat << EOF

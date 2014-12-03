@@ -1,3 +1,5 @@
+# Download genbank file given refseq id
+
 import argparse
 import sys
 

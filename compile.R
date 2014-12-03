@@ -1,3 +1,6 @@
+# Compile features into a single data frame with tab-separated columns
+# locus_id refseq class features...
+
 library(plyr)
 
 features<-c("homology", "properties", "structure", "upalindromes", "essentiality")

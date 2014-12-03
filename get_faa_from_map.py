@@ -1,3 +1,5 @@
+# Get .faa files from a mapping. aa sequences are extracted from genbank file. 
+
 import argparse
 import sys
 

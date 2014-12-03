@@ -1,3 +1,8 @@
+# Get upstream sequences of length $window (according to strand in genbank)
+# enumerate palindromes and return length and distance of best palindrome
+# where the best palindrome is defined as the longest palindrome
+# with the shortest length
+
 import argparse
 
 from Bio import SeqIO

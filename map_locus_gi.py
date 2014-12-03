@@ -1,3 +1,6 @@
+# Get positive mapping from TADB and look up gene identifiers from genbank
+# Throw out locus_tag with more than 2 genes
+
 import argparse
 import sys
 

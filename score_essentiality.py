@@ -1,3 +1,5 @@
+# Use pre-computed essentiality scores
+
 import argparse
 
 def parse_essentiality_txt(essentiality_txt):

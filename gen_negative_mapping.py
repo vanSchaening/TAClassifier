@@ -1,3 +1,7 @@
+# Generate a negative mapping from the genbank file by filtering out
+# hypothetical proteins and proteins known to be in TA systems
+# Additional filters can be added. 
+
 import argparse
 
 from itertools import islice
