@@ -36,6 +36,7 @@ def properties(toxin_faa,antitoxin_faa,out):
                 else:
                     loci[locus].append({ 'start': start,
                                          'pI': 0, 'weight':0 })
+
         
     # Order genes in a locus positionally
     loci = orderPairs(loci)
@@ -48,6 +49,8 @@ def properties(toxin_faa,antitoxin_faa,out):
                             "gene1_weight","gene2_weight"])
         o.write("#"+ header.upper() + "\n")
         for locus, gene in loci.iteritems():
+            if len(gene) != 2:
+                continue
             line = map(str, [ locus,gene[0]['pI'],gene[1]['pI'],
                               gene[0]['weight'],gene[1]['weight'] ])
             o.write("\t".join(line)+"\n")
@@ -57,6 +60,8 @@ def properties(toxin_faa,antitoxin_faa,out):
 # Every gene pair in in loci must be ordered by position
 def orderPairs(loci):
     for locus, genes in loci.iteritems():
+        if len(genes) != 2:
+            continue
         if genes[0]['start'] > genes[1]['start']:
             loci[locus] = [ genes[1], genes[0] ]
     return loci
@@ -64,9 +69,7 @@ def orderPairs(loci):
 
 def getNameAndPosition(record):
     description = record.description.split("\t")
-    if len(description) < 4:
-        return record.id ,False
-    locus = description[2]
+    locus = record.id.split("|")[0]
     start = int(description[1].split(":")[1].split("..")[0])
     return locus, start
 
