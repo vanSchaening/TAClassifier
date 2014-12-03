@@ -28,7 +28,6 @@ def makeDatasets(infile,fraction,output):
             from random import randint
             for line in f:
                 val = randint(0,count)
-                print val,keep
                 if val <= keep:
                     tst.write(line)
                 else:
