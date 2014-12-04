@@ -101,19 +101,25 @@ else
     echo "...done! Wrote $NEGATIVE.mapping.txt."
 fi
 
-echo "Getting .faa files..."
-GET_FAA="get_faa_from_map.py"
-for class in $POSITIVE $NEGATIVE
-do
-    if [[ -f $class.toxin.faa ]] && [[ -f $class.antitoxin.faa ]]
-    then
-        echo "...$class.*.faa exist"
-    else
-        set -o xtrace
-        python $TAC_PATH/$GET_FAA -g $GBK -m $class.mapping.txt -o $class
-        set +o xtrace
-        echo "...done! Wrote $class.*.faa."
-    fi
-done
-
-#echo "Getting .fa file..."
+echo "Computing all primary features..."
+PRIMARY="compute_primary_features.py"
+if [[ -f $POSITIVE.features.primary.txt ]]
+then
+    echo "...$POSITIVE.features.primary.txt exists"
+else
+    set -o xtrace
+    python $TAC_PATH/$PRIMARY -g $GBK -m $POSITIVE.mapping.txt -c 1 \
+        > $POSITIVE.features.primary.txt
+    set +o xtrace
+    echo "...done! Wrote $POSITIVE.features.primary.txt"
+fi
+if [[ -f $NEGATIVE.features.primary.txt ]]
+then
+    echo "...$NEGATIVE.features.primary.txt exists"
+else
+    set -o xtrace
+    python $TAC_PATH/$PRIMARY -g $GBK -m $NEGATIVE.mapping.txt -c -1 \
+        > $NEGATIVE.features.primary.txt
+    set +o xtrace
+    echo "...done! Wrote $NEGATIVE.features.primary.txt"
+fi

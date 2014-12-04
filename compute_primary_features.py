@@ -22,9 +22,8 @@ cu_headers = (["cupt_"+c for c in CODON_ALPHABET] +
 pf_headers = ["mw", "aromaticity", "instability", "isoelectric", 
               "gravy", "ssh", "sst", "sss"]
 final_headers = nc_headers + cu_headers + pf_headers
-final_headers = (['loci', 'gi_1', 'gi_2', 'class', 'aalen_1'] + 
-    [h+'_1' for h in final_headers] + ['aalen_2'] + 
-    [h+'_2' for h in final_headers])
+final_headers = (['loci', 'gi_1', 'gi_2', 'class', 'aalen_1', 'aalen_2', 'distance'] + 
+    [h+'_1' for h in final_headers] + [h+'_2' for h in final_headers])
 #print gen_header()
 
 def grouper(iterable, n, fillvalue = None):
@@ -120,7 +119,7 @@ def get_protein_analysis(aa):
     return analyze
 
 def compute_features(dna):
-    aa = dna.translate(table=11) # note that first aa should be M
+    aa = dna.translate(table=11, to_stop=True) # note that first aa should be M
     
     dna = str(dna).upper()
     aa = str(aa).upper()
@@ -169,16 +168,19 @@ def main():
 
             locus, tgi, agi = line.strip().split()
             
-            record = gb_dict[tgi] 
-            t_dna = record.location.extract(gb_record.seq)
+            t_record = gb_dict[tgi] 
+            t_dna = t_record.location.extract(gb_record.seq)
             t_features = compute_features(t_dna)
 
-            record = gb_dict[agi]
-            a_dna = record.location.extract(gb_record.seq)
+            a_record = gb_dict[agi]
+            a_dna = a_record.location.extract(gb_record.seq)
             a_features = compute_features(a_dna)
 
+            # (a_start, a_end) (t_start, t_end)
+            distance = t_record.location.start - a_record.location.end
+
             features = t_features + a_features
-            features = ([locus, args.classs, tgi, agi, len(t_dna), len(a_dna)] 
+            features = ([locus, args.classs, tgi, agi, len(t_dna), len(a_dna), distance] 
                 + t_features + a_features)
             assert len(features) == len(final_headers)
             print ','.join(str(f) for f in features)
