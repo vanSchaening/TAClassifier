@@ -4,6 +4,7 @@
 # normalize data?
 
 library(plyr)
+library(ggplot2)
 
 classes<-c("positive", "negative")
 # enumerate all features
@@ -48,19 +49,23 @@ import_by_refseq_and_class <- function(refseq, class) {
 }
 
 add_inverted_negatives <- function(data) {
-  inverted<-data[data$class==-1]
-  colnames(inverted)<-inverted_colnames;
+  n = nrow(data)
+  inverted<-data[data$class==-1,]
+  colnames(inverted)<-inverted_colnames
   inverted<-inverted[feature_names]
   inverted$locus_id<-paste(inverted$locus_id, "i", sep="_")
+  cat("Added", nrow(inverted), "inverted negatives.\n")
   return(rbind(data, inverted))
 }
 
 add_inverted_positives <- function(data) {
+  n = nrow(data)
   inverted<-data[data$class==1,]
   colnames(inverted)<-inverted_colnames;
   inverted<-inverted[feature_names]
-  inverted$class<-1
   inverted$locus_id<-paste(inverted$locus_id, "i", sep="_") 
+  inverted$class<-(-1)
+  cat("Added", nrow(inverted), "inverted negatives.\n")
   return(rbind(data, inverted))  
 }
 
@@ -69,11 +74,38 @@ import_by_refseq <- function(refseq) {
   data<-Reduce(rbind, data)
   #data<-add_inverted_negatives(data)
   #data<-add_inverted_positives(data)
+  data<-filter_by_structure(data)
+  cat("refseq:", refseq, "positive:", sum(data$class==1), "negative:", sum(data$class==-1), '\n')
   return(data)
 }
 
-args <- commandArgs(trailingOnly = TRUE) # use first argument as output file
-refseqs<-read.table(args[[1]])$V1
-data<-Reduce(rbind, lapply(refseqs, import_by_refseq))
-write.table(data, file=args[[2]], quote=FALSE, sep="\t", row.names=FALSE)
+filter_by_structure <- function(data) {
+  n = nrow(data)
+  #max_overlap_positive = max(abs(data[data$class==1,]$structure.overlap))
+  max_distance_positive = max(abs(data[data$class==1,]$structure.distance))
+  #data<-data[abs(data$structure.overlap) < max_overlap_positive+1, ]
+  data<-data[abs(data$structure.distance) < max_distance_positive+1, ]
+  cat("Filtered", n-nrow(data), 'for structure.\n')
+  return (data)
+}
 
+add_secondary_features <- function(data) {
+  data$properties.ratio.pi = data$properties.gene1.pi/data$properties.gene2.pi
+  data$essentiality.ratio = data$essentiality.antitoxin/data$essentiality.toxin
+  data$essentiality.ratio[ is.nan(data$essentiality.ratio) ] <- 0
+  data$essentiality.ratio[ is.infinite(data$essentiality.ratio) ] <- 0
+  return(data)
+}
+
+normalize_data <- function(data) {
+  return(data)
+}
+
+#args <- commandArgs(trailingOnly = TRUE) # use first argument as output file
+#refseqs<-read.table(args[[1]])$V1
+refseqs<-list.files('.', 'NC')
+data<-Reduce(rbind, lapply(refseqs, import_by_refseq))
+data<-add_secondary_features(data)
+#write.table(data, file=args[[1]], quote=FALSE, sep="\t", row.names=FALSE)
+
+#ggplot(data, aes(x=homology.antitoxin, group=as.factor(class), color=as.factor(class))) + geom_density()
