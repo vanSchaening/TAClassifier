@@ -32,10 +32,12 @@ def properties(toxin_faa,antitoxin_faa,out):
                     data = ProteinAnalysis(aaseq)
                     loci[locus].append({ 'start':  start,
                                          'pI':     data.isoelectric_point(),
-                                         'weight': data.molecular_weight() })
+                                         'weight': data.molecular_weight(),
+                                         'instability': data.instability_index() })
                 else:
                     loci[locus].append({ 'start': start,
-                                         'pI': 0, 'weight':0 })
+                                         'pI': 0, 'weight':0 ,
+                                         'instability': 0 })
 
         
     # Order genes in a locus positionally
@@ -46,13 +48,16 @@ def properties(toxin_faa,antitoxin_faa,out):
     with open(outfile,'w') as o:
         header = "\t".join(["locus",
                             "gene1_pI","gene2_pI",
-                            "gene1_weight","gene2_weight"])
+                            "gene1_weight","gene2_weight",
+                            "gene1_instability","gene2_instability" ])
+
         o.write("#"+ header.upper() + "\n")
         for locus, gene in loci.iteritems():
             if len(gene) != 2:
                 continue
             line = map(str, [ locus,gene[0]['pI'],gene[1]['pI'],
-                              gene[0]['weight'],gene[1]['weight'] ])
+                              gene[0]['weight'],gene[1]['weight'],
+                              gene[0]['instability'],gene[1]['instability'] ])
             o.write("\t".join(line)+"\n")
     return outfile
 
