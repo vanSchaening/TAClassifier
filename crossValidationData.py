@@ -11,7 +11,7 @@ def main():
                         help="Whether or not to balance the data")
     args = parser.parse_args()
 
-    if args.b:
+    if args.balance:
         trnfile,tstfile = makeBalancedData(args.infile,args.size,args.output)
     else:
         trnfile,tstfile = makeDatasets(args.infile,args.size,args.output)
@@ -19,6 +19,8 @@ def main():
     return
 
 
+# Partitions data into train and validate while making sure to keep the number
+# of negative points equal to positive (assumes positive is smaller)
 def makeBalancedData(infile,f,output):
     X = getData(infile)
 
@@ -69,8 +71,8 @@ def getData(infile):
             sample[2] = int(sample[2])
     return X
 
-        
 
+# Partitions the data into train and validate        
 def makeDatasets(infile,fraction,output):
     with open(infile) as f:
         # Find the number of datapoints to keep for test set

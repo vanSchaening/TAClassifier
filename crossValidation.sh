@@ -18,7 +18,8 @@ OUT_PATH=
 REFID=
 F=
 N=
-while getopts "hd:c:o:p:f:n:" OPTION
+B=
+while getopts "hd:c:o:p:f:n:b:" OPTION
 do 
     case $OPTION in
 	h)
@@ -36,6 +37,8 @@ do
 	    N=$OPTARG;;
 	f)
 	    F=$OPTARG;;
+	b)
+	    B=$OPTARG;;
 	?)
 	    usage
 	    exit 1
@@ -58,11 +61,16 @@ then
     F=0.15
 fi
 
+if [ ! $B]
+then 
+    B=False
+fi
+
 CROSS="crossValidationData.py"
 echo "Generating train/test datasets"
 for i in $(seq 1 $N) 
 do 
-    python $TAC_PATH/$CROSS -i $INFILE -o $OUT_PATH/$REFID.$i -f $F 
+    python $TAC_PATH/$CROSS -i $INFILE -o $OUT_PATH/$REFID.$i -f $F -b $B
     echo "    $REFID.$i.train.txt, $REFID.$i.test.txt"
 done
 
