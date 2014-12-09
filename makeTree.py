@@ -13,13 +13,11 @@ def main():
     args = parser.parse_args()
 
     # Train
-    print "Training ..."
     X_trn, Y_trn = getData(args.train)
     clf = tree.DecisionTreeClassifier(max_depth=args.depth)
     clf = clf.fit(X_trn,Y_trn)
 
     # Test
-    print "Validating ..."
     X_tst,Y_tst = getData(args.test)
     Y_hat = clf.predict(X_tst)
     with open(args.output+".treeReport.txt",'w') as o:
@@ -27,7 +25,6 @@ def main():
         err = misclassificationRate(Y_tst,Y_hat)
         classes = classifications(Y_tst,Y_hat)
         # Write report on error rates
-        print "Writing report ..."
         o.write("Trained over:\t"+args.train+"\n")
         o.write("Maximum depth:\t"+str(args.depth)+"\n\n")
         o.write("Validated on:\t"+args.test+"\n")
@@ -41,7 +38,6 @@ def main():
         o.write("Tree stored in:\t"+
                 args.output+".tree.pkl")
 
-    print "Storing tree ..."
     from sklearn.externals import joblib
     joblib.dump(clf, args.output+".tree.pkl", compress=9)
 
