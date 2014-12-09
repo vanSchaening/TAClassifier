@@ -1,4 +1,3 @@
-from sklearn import tree
 def main():
     import argparse
     parser = argparse.ArgumentParser()
@@ -8,22 +7,42 @@ def main():
                         help="validation set")
     parser.add_argument('-d', '--depth', type=int, default=4,
                         help="maximum tree depth")
+    parser.add_argument('-n', '--forest', default=False, type=int,
+                        help="Number of trees in the forest (if you want to use a forest")
     parser.add_argument('-o', '--output',
                         help="output prefix")
     args = parser.parse_args()
 
     # Train
     X_trn, Y_trn = getData(args.train)
-    clf = tree.DecisionTreeClassifier(max_depth=args.depth)
-    clf = clf.fit(X_trn,Y_trn)
+    if not args.forest:
+        from sklearn import tree
+        clf = tree.DecisionTreeClassifier(max_depth=args.depth)
+        clf = clf.fit(X_trn,Y_trn)
+    else:
+        from sklearn.ensemble import RandomForestClassifier
+        clf = RandomForestClassifier(max_depth=args.depth,
+                                     n_estimators=args.forest)
+        clf = clf.fit(X_trn,Y_trn)
+
+    # Define output filenames
+    if args.forest:
+        report = args.output + ".forestReport.txt"
+        clf_file = args.output + ".forest.pkl"
+    else:
+        report = args.output + ".treeReport.txt"
+        clf_file = args.output + ".tree.pkl"
 
     # Test
     X_tst,Y_tst = getData(args.test)
     Y_hat = clf.predict(X_tst)
-    with open(args.output+".treeReport.txt",'w') as o:
+
+    with open(report,'w') as o:
+
         # Find error rates
         err = misclassificationRate(Y_tst,Y_hat)
         classes = classifications(Y_tst,Y_hat)
+
         # Write report on error rates
         o.write("Trained over:\t"+args.train+"\n")
         o.write("Maximum depth:\t"+str(args.depth)+"\n\n")
@@ -39,8 +58,7 @@ def main():
                 args.output+".tree.pkl")
 
     from sklearn.externals import joblib
-    joblib.dump(clf, args.output+".tree.pkl", compress=9)
-
+    joblib.dump(clf, clf_file, compress=9)
 
     return
 
