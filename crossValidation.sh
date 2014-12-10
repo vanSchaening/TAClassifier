@@ -79,10 +79,12 @@ then
 for i in $(seq 1 $N)
 do 
     python $TAC_PATH/$CROSS -i $INFILE -o $OUT_PATH/$REFID.$i -f $F -b $B 
-    echo "$REFID.$i.train.txt\t$REFID.$i.test.txt" >> CATALOG
+    printf '%s\t%s\n' "$REFID.$i.train.txt" "$REFID.$i.test.txt" >> $CATALOG
+    #echo "$REFID.$i.train.txt\t$REFID.$i.test.txt" >> $CATALOG
     echo "    $REFID.$i.train.txt, $REFID.$i.test.txt"
 
 done
 else
     python $TAC_PATH/$CROSS -i $INFILE -o $OUT_PATH/$REFID -f $F -b $B
+    echo "    $REFID.train.txt, $REFID.test.txt"
 fi

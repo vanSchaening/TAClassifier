@@ -75,19 +75,25 @@ fi
 ENSEMBLE=$TAC_PATH/learners/makeEnsemble.py
 TREE=$TAC_PATH/learners/makeTree.py
 
+# Train an ensemble of decision trees
 if [[ $E ]]
 then
+    echo "Building training/validation datasets"
+    bash $TAC_PATH/crossValidation.sh -d $INFILE -c $TAC_PATH -o $OUT_PATH -p $PREFIX -n $E
     echo "Building an ensemble of $E trees of maximum depth $D."
-    # Run cross validation for |E| trees
-    echo "... stored in $REFID.ensemble.pkl"
+    python $ENSEMBLE -f $OUT_PATH/$PREFIX.sets.txt -o $OUT_PATH/$PREFIX 
+    echo "... stored in $PREFIX.ensemble.pkl"
 fi
 
 if [[ $R ]]
 then
+    echo "Building training/validation datasets"
+    bash $TAC_PATH/crossValidation.sh -d $INFILE -c $TAC_PATH -o $OUT_PATH -p $PREFIX
     echo "Building a random forest of $R trees of maximum depth $D."
-    echo "... stored in $REFID.forest.pkl"
+    echo "... stored in $PREFIX.forest.pkl"
 fi
 
+# Train a single decision tree
 if ! [[ $E || $R ]]
 then
     echo "Building training/validation datasets"
