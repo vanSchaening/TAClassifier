@@ -34,8 +34,8 @@ def makeBalancedData(infile,f,output):
         # Write the positive points
         X_trn,X_tst = partition([data for data in X if data[2] > 0],
                                 keep)
-        trn.write(formatForOutput(X_trn))
-        tst.write(formatForOutput(X_tst))
+        trn.write(formatForOutput(X_trn)+"\n")
+        tst.write(formatForOutput(X_tst)+"\n")
 
         # Write the negative points, count positive test points to 
         # keep it balanced

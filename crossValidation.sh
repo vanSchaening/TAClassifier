@@ -66,11 +66,23 @@ then
     B=False
 fi
 
-CROSS="crossValidationData.py"
-echo "Generating train/test datasets"
-for i in $(seq 1 $N) 
-do 
-    python $TAC_PATH/$CROSS -i $INFILE -o $OUT_PATH/$REFID.$i -f $F -b $B
-    echo "    $REFID.$i.train.txt, $REFID.$i.test.txt"
-done
+if [ ! $N]
+then
+    N=1
+fi
 
+CROSS="crossValidationData.py"
+CATALOG=$OUT_PATH/$REFID.sets.txt
+echo "Generating train/test datasets"
+if [[ $N != 1 ]]
+then
+for i in $(seq 1 $N)
+do 
+    python $TAC_PATH/$CROSS -i $INFILE -o $OUT_PATH/$REFID.$i -f $F -b $B 
+    echo "$REFID.$i.train.txt\t$REFID.$i.test.txt" >> CATALOG
+    echo "    $REFID.$i.train.txt, $REFID.$i.test.txt"
+
+done
+else
+    python $TAC_PATH/$CROSS -i $INFILE -o $OUT_PATH/$REFID -f $F -b $B
+fi
