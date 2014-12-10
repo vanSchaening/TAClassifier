@@ -90,6 +90,7 @@ then
     echo "Building training/validation datasets"
     bash $TAC_PATH/crossValidation.sh -d $INFILE -c $TAC_PATH -o $OUT_PATH -p $PREFIX
     echo "Building a random forest of $R trees of maximum depth $D."
+    python $TREE -r $OUT_PATH/$PREFIX.train.txt -s $OUT_PATH/$PREFIX.test.txt -o $OUT_PATH/$PREFIX -n $R
     echo "... stored in $PREFIX.forest.pkl"
 fi
 
