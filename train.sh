@@ -48,13 +48,6 @@ do
 	esac
 done
 
-#if [[ $REFID ]] && [[ $PREFIX ]]
-#then
-#    REFID=$REFID/$PREFIX
-#else
-#    REFID=$PREFIX
-#fi
-
 set -o nounset
 set -o errexit
 
@@ -85,6 +78,7 @@ then
     echo "... stored in $PREFIX.ensemble.pkl"
 fi
 
+# Train a random forest
 if [[ $R ]]
 then
     echo "Building training/validation datasets"
