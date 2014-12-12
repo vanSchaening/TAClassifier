@@ -3,8 +3,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-r', '--refid',
                         help="RefSeq ID")
+    parser.add_argument('-o', '--outdir', default="",
+                        help="Output directory")
     args = parser.parse_args()
     
+    if args.outdir:
+        if not args.outdir.endswith("/"):
+            args.outdir += "/"
+
     # Feature file names (without prefix)
     features = ["homology",
                 "properties",
