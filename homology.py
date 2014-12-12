@@ -67,8 +67,9 @@ def joinScores(a_scores,t_scores,prefix):
     # Write homology scores for all pairs, order genes in 
     # a pair by position, not by toxin/antitoxin
     mapfile = prefix+".mapping.txt"
-    outfile = prefix+".homology.txt"
+    outfile = prefix+".features.homology.txt"
     with open(mapfile) as id_map, open(outfile,'w') as o:
+        o.write("#LOCUS\tHOMOLOGY:TOXIN\tHOMOLOGY:ANTITOXIN\n")        
         for line in id_map:
             if line.startswith("#"):
                 continue

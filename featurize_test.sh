@@ -8,7 +8,6 @@ usage:  options
 OPTIONS:
     -h Show this message
     -r refseq ID
-    -t TADB path (defaults to $TAC_PATH/TADB)
     -b BLAST path (optional if already on path)
     -c TAClassifier path
 EOF
@@ -181,12 +180,6 @@ else
     set -o xtrace
     python $TAC_PATH/$HOMOLOGY -t $REFID.toxin.faa -a $REFID.antitoxin.faa \
         -d $DATABASE -o $REFID
-    echo "#LOCUS HOMOLOGY:TOXIN HOMOLOGY:ANTITOXIN" > $REFID.features.homology.txt
-    gjoin -j 1 \
-        <(cat $REFID.homology.toxin.txt | tr "|" "\t" | cut -f 1,3 | sort) \
-        <(cat $REFID.homology.antitoxin.txt | tr "|" "\t" | cut -f 1,3 | sort) \
-        >> $REFID.features.homology.txt
-    set +o xtrace
     echo "...Wrote $REFID.features.homology.txt"
 fi
 
