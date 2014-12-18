@@ -37,8 +37,10 @@ def main():
                            "essentiality.toxin","essentiality.antitoxin",
                            "properties.ratio.pi","essentiality.ratio"])+"\n")
         for locus in loci:
-            line = [ "\t".join(values) 
-                     for feature,values in loci[locus].iteritems() ]
+            line = [ locus, args.refid ]
+            line.extend([ "\t".join(values) for feature,values 
+                          in loci[locus].iteritems() ])
+            
             # Calculate isoelectric point ratio
             t_pi,a_pi = map(float,loci[locus]['properties'][1:3])
             line.append(str(t_pi/a_pi))
