@@ -25,6 +25,9 @@ def main():
     for feature in features:
         for locus,value in getFeature(args.refid,feature).iteritems():
             loci[locus][feature] = value
+    #for locus in loci:
+    #    if "homology" not in loci[locus].keys():
+    #        loci[locus]["homology"] = [0,0]
 
     with open(args.refid+".data.txt",'w') as o:
         o.write("\t".join(["locus_id","refseq",
@@ -38,9 +41,13 @@ def main():
                            "properties.ratio.pi","essentiality.ratio"])+"\n")
         for locus in loci:
             line = [ locus, args.refid ]
-            line.extend([ "\t".join(values) for feature,values 
-                          in loci[locus].iteritems() ])
-            
+            try:
+                for feature in features:
+                    line.extend( loci[locus][feature] )
+            except KeyError:
+                continue
+#            line.extend([ "\t".join(values) for feature,values 
+#                          in loci[locus].iteritems() ])
             # Calculate isoelectric point ratio
             t_pi,a_pi = map(float,loci[locus]['properties'][1:3])
             line.append(str(t_pi/a_pi))
@@ -51,7 +58,7 @@ def main():
             except ZeroDivisionError:
                 ratio = "0"
             line.append(ratio)
-            o.write("\t".join(line)+"\n")
+            o.write("\t".join(map(str,line))+"\n")
 
     return
 
@@ -63,6 +70,15 @@ def getFeature(refid,feat_name):
         for line in f:
             line = line.strip().split()
             feat[line[0]] = line[1:]
+            if feat_name == "properties":
+                feat[line[0]] = line[1:5]
+            if feat_name in ["homology","essentiality","upalindromes"] :
+                assert len(line[1:]) == 2
+            if feat_name == "structure":
+                assert len(line[1:]) == 4
+            if feat_name == "properties":
+                assert len(line[1:]) == 6
+
     return feat
 
 # ------------------------------------------------------------------------------
