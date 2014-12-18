@@ -19,7 +19,7 @@ REFID=
 TAC_PATH=
 while getopts "hp:d:r:o:c:" OPTION
 do
-    case $OPTION IN
+    case $OPTION in
 	h)
 	    usage
 	    exit 1;;
@@ -36,6 +36,7 @@ do
 	?)
 	    usage
 	    exit 1;;
+    esac
 done
 
 if ! [ -f $INFILE]
