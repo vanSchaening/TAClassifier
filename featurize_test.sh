@@ -70,16 +70,7 @@ else
     echo "...done! Wrote $GBK"
 fi
 
-echo "Downloading essentiality file..."
-if [[ -f $REFID.essentiality.txt ]]
-then
-    echo "$REFID.essentiality.txt exists"
-else
-    set -o xtrace
-    wget http://cefg.uestc.edu.cn/geptop/prediction/$REFID.dat -O $REFID.essentiality.txt
-    set +o xtrace
-    echo "...done! Wrote $REFID.essentiality.txt"
-fi
+# Paste back here
 
 echo "Generating data mapping..."
 MAP="gen_mapping.py"
@@ -117,6 +108,18 @@ else
     set -o xtrace
 fi
 
+# Moved to here
+
+echo "Downloading essentiality file..."
+if [[ -f $REFID.essentiality.txt ]]
+then
+    echo "$REFID.essentiality.txt exists"
+else
+    set -o xtrace
+    wget http://cefg.uestc.edu.cn/geptop/prediction/$REFID.dat -O $REFID.essentiality.txt
+    set +o xtrace
+    echo "...done! Wrote $REFID.essentiality.txt"
+fi
 
 echo "Scoring..."
 ESSENTIALITY="score_essentiality.py"
@@ -183,3 +186,5 @@ else
     echo "...Wrote $REFID.features.homology.txt"
 fi
 
+python $TAC_PATH/join.py -r $REFID  
+echo "Done. Wrote data to $REFID.data.txt"
