@@ -74,7 +74,7 @@ then
     echo "Building training/validation datasets"
     bash $TAC_PATH/crossValidation.sh -d $INFILE -c $TAC_PATH -o $OUT_PATH -p $PREFIX -n $E
     echo "Building an ensemble of $E trees of maximum depth $D."
-    python $ENSEMBLE -f $OUT_PATH/$PREFIX.sets.txt -o $OUT_PATH/$PREFIX 
+    python $ENSEMBLE -f $OUT_PATH/$PREFIX.sets.txt -o $OUT_PATH/$PREFIX -d $D 
     echo "... stored in $PREFIX.ensemble.pkl"
 fi
 
@@ -84,7 +84,7 @@ then
     echo "Building training/validation datasets"
     bash $TAC_PATH/crossValidation.sh -d $INFILE -c $TAC_PATH -o $OUT_PATH -p $PREFIX
     echo "Building a random forest of $R trees of maximum depth $D."
-    python $TREE -r $OUT_PATH/$PREFIX.train.txt -s $OUT_PATH/$PREFIX.test.txt -o $OUT_PATH/$PREFIX -n $R
+    python $TREE -r $OUT_PATH/$PREFIX.train.txt -s $OUT_PATH/$PREFIX.test.txt -o $OUT_PATH/$PREFIX -n $R -d $D
     echo "... stored in $PREFIX.forest.pkl"
 fi
 
