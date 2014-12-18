@@ -9,7 +9,9 @@ def main():
     
     if args.outdir:
         if not args.outdir.endswith("/"):
-            args.outdir += "/"
+            args.refid = args.outdir + "/" + args.refid
+        else:
+            args.refid = args.outdir + args.refid
 
     # Feature file names (without prefix)
     features = ["homology",
